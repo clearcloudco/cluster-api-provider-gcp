@@ -237,3 +237,8 @@ func (s *ManagedControlPlaneScope) SetEndpoint(host string) {
 func (s *ManagedControlPlaneScope) IsAutopilotCluster() bool {
 	return s.GCPManagedControlPlane.Spec.EnableAutopilot
 }
+
+// WorkloadIdentityWorkloadPool returns the Workload Identity workload pool
+func (s *ManagedControlPlaneScope) WorkloadIdentityWorkloadPool() string {
+	return fmt.Sprintf("%s.svc.id.goog", s.GCPManagedControlPlane.Spec.Project)
+}

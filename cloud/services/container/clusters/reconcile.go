@@ -23,7 +23,6 @@ import (
 
 	"sigs.k8s.io/cluster-api-provider-gcp/cloud/scope"
 	"sigs.k8s.io/cluster-api-provider-gcp/cloud/services/shared"
-
 	"cloud.google.com/go/container/apiv1/containerpb"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
@@ -261,6 +260,14 @@ func (s *Service) createCluster(ctx context.Context, log *logr.Logger) error {
 			Channel: convertToSdkReleaseChannel(s.scope.GCPManagedControlPlane.Spec.ReleaseChannel),
 		},
 		MasterAuthorizedNetworksConfig: convertToSdkMasterAuthorizedNetworksConfig(s.scope.GCPManagedControlPlane.Spec.MasterAuthorizedNetworksConfig),
+		WorkloadIdentityConfig: &containerpb.WorkloadIdentityConfig{
+			WorkloadPool: s.scope.WorkloadIdentityWorkloadPool(),
+		},
+		NetworkConfig: &containerpb.NetworkConfig{
+			GatewayApiConfig: &containerpb.GatewayAPIConfig{
+				Channel: containerpb.GatewayAPIConfig_CHANNEL_STANDARD,
+			},
+		},
 	}
 	if s.scope.GCPManagedControlPlane.Spec.ControlPlaneVersion != nil {
 		cluster.InitialClusterVersion = convertToSdkMasterVersion(*s.scope.GCPManagedControlPlane.Spec.ControlPlaneVersion)
